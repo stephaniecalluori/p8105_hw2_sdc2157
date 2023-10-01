@@ -5,19 +5,43 @@ date: 2023-10-04
 output: github_document
 ---
 
-I'm an R Markdown document! 
-
-# Section 1
-
-Here's a **code chunk** that samples from 
-a _normal distribution_:
-
-```{r}
-samp = rnorm(100)
-length(samp)
+```{r, load_packages, message = FALSE}
+library(tidyverse)
+library(readxl)
 ```
 
-# Section 2
+Importing Data
+```{r, import_data, results = "hide", message = FALSE}
+pols_month_raw <- 
+  read_csv("data/pols-month.csv")
+head(pols_month_raw)
 
-I can take the mean of the sample, too!
-The mean is `r mean(samp)`.
+snp_raw <-
+  read_csv("data/snp.csv")
+head(snp_raw)
+
+unemployment_raw <-
+  read_csv("data/unemployment.csv")
+head(unemployment_raw)
+
+mr_trash_raw <-
+  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N549")
+head(mr_trash_raw)
+
+prof_trash_raw <-
+  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M96")
+head(prof_trash_raw)
+
+gwynnda_raw <-
+  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:K108")
+head(gwynnda_raw)
+
+mci_amyloid_raw <-
+  read_csv("data/mci_amyloid.csv")
+head(mci_amyloid_raw)
+
+mci_baseline_raw <- 
+  read_csv("data/MCI_baseline.csv")
+head(mci_baseline_raw)
+
+```
