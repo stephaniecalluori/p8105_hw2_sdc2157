@@ -15,6 +15,7 @@ library(readxl)
 pols_month_raw <- 
   read_csv("data/pols-month.csv")
 head(pols_month_raw)
+sum(is.na(pols_month_raw))
 
 snp_raw <-
   read_csv("data/snp.csv")
@@ -47,9 +48,16 @@ head(mci_baseline_raw)
 ```
 
 # Problem 1
-First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 
-```{r}
+```{r, pols data exploration, include = FALSE}
+pols_month_raw |>
+  count(prez_gop)
+
+pols_month_raw |>
+  count(prez_dem)
+```
+
+```{r, pols cleaning}
 pols_month_df <- pols_month_raw |>
   janitor::clean_names() |> 
   separate(mon, c("year", "month", "day"), "-", convert = TRUE) |> 
@@ -67,18 +75,13 @@ pols_month_df <- pols_month_raw |>
     10 ~ "Oct",
     11 ~ "Nov",
     12 ~ "Dec"),
-    prez_gop = case_match(
-      prez_gop,
-      0 ~ "other",
-      1 ~ "gop"),
-    prez_dem = case_match(
-      prez_dem,
-      0 ~ "other",
-      1 ~ "dem")
-  )
+    prez = recode(
+      prez_dem, 
+      "0" = "gop", 
+      "1" = "dem")
+  ) |> 
+  select(-day, -prez_gop, -prez_dem)
 
-
-head(pols_month_df)
 ```
 
 
