@@ -20,6 +20,7 @@ sum(is.na(pols_month_raw))
 snp_raw <-
   read_csv("data/snp.csv")
 head(snp_raw)
+sum(is.na(snp_raw))
 
 unemployment_raw <-
   read_csv("data/unemployment.csv")
@@ -58,31 +59,36 @@ pols_month_raw |>
 ```
 
 ```{r, pols cleaning}
+month_df = 
+  tibble(
+    month_num = 1:12,
+    month = c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
+  )
+
 pols_month_df <- pols_month_raw |>
   janitor::clean_names() |> 
-  separate(mon, c("year", "month", "day"), "-", convert = TRUE) |> 
-  mutate(month = case_match(
-    month,
-    1 ~ "Jan",
-    2 ~ "Feb",
-    3 ~ "Mar",
-    4 ~ "Apr", 
-    5 ~ "May",
-    6 ~ "June",
-    7 ~ "July",
-    8 ~ "Aug",
-    9 ~ "Sept",
-    10 ~ "Oct",
-    11 ~ "Nov",
-    12 ~ "Dec"),
-    prez = recode(
+  separate(mon, c("year", "month_num", "day"), "-", convert = TRUE) |> 
+  mutate(prez = recode(
       prez_dem, 
       "0" = "gop", 
-      "1" = "dem")
-  ) |> 
-  select(-day, -prez_gop, -prez_dem)
+      "1" = "dem")) |> 
+  left_join(x = _, y = month_df, by = "month_num") |> 
+  select(year, month, everything(), -month_num, -day, -prez_gop, -prez_dem)
+
+head(pols_month_df)
 
 ```
 
+First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
+
+Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+
+```{r, snp cleaning}
+snp_df <- snp_raw |>
+  janitor::clean_names() |> 
+  separate(date, c("month", "day", "year"), "/", convert = TRUE)
+
+
+```
 
 
