@@ -62,7 +62,7 @@ pols_month_raw |>
 month_df = 
   tibble(
     month_num = 1:12,
-    month = c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
+    month = c("jan", "feb", "mar", "apr", "may", "june", "july", "aug", "sept", "oct", "nov", "dec")
   )
 
 pols_month_df <- pols_month_raw |>
@@ -79,10 +79,6 @@ head(pols_month_df)
 
 ```
 
-First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
-
-Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
-
 ```{r, snp cleaning}
 snp_df <- snp_raw |>
   janitor::clean_names() |> 
@@ -93,5 +89,22 @@ snp_df <- snp_raw |>
 
 head(snp_df)
 ```
+
+
+```{r, unemployment cleaning}
+unemployment_df <- unemployment_raw |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "percent_unemployed"
+  )
+
+head(unemployment_df)
+
+```
+
+
+
 
 
