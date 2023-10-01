@@ -86,9 +86,12 @@ Second, clean the data in snp.csv using a similar process to the above. For cons
 ```{r, snp cleaning}
 snp_df <- snp_raw |>
   janitor::clean_names() |> 
-  separate(date, c("month", "day", "year"), "/", convert = TRUE)
+  mutate(date = lubridate::mdy(date)) |> 
+  separate(date, c("year", "month_num", "day"), "-", convert = TRUE) |> 
+  left_join(x = _, y = month_df, by = "month_num") |> 
+  select(year, month, close, -month_num, -day)
 
-
+head(snp_df)
 ```
 
 
