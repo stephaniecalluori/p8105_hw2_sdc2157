@@ -25,6 +25,7 @@ sum(is.na(snp_raw))
 unemployment_raw <-
   read_csv("data/unemployment.csv")
 head(unemployment_raw)
+sum(is.na(unemployment_raw))
 
 mr_trash_raw <-
   read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N549")
@@ -34,9 +35,9 @@ prof_trash_raw <-
   read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M96")
 head(prof_trash_raw)
 
-gwynnda_raw <-
+gwyn_trash_raw <-
   read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:K108")
-head(gwynnda_raw)
+head(gwyn_trash_raw)
 
 mci_amyloid_raw <-
   read_csv("data/mci_amyloid.csv")
@@ -48,7 +49,7 @@ head(mci_baseline_raw)
 
 ```
 
-# Problem 1
+# Problem 1 - Under REVISION
 
 ```{r, pols data exploration, include = FALSE}
 pols_month_raw |>
@@ -79,6 +80,7 @@ head(pols_month_df)
 
 ```
 
+
 ```{r, snp cleaning}
 snp_df <- snp_raw |>
   janitor::clean_names() |> 
@@ -88,6 +90,7 @@ snp_df <- snp_raw |>
   select(year, month, close, -month_num, -day)
 
 head(snp_df)
+
 ```
 
 
@@ -101,10 +104,74 @@ unemployment_df <- unemployment_raw |>
   )
 
 head(unemployment_df)
+```
+
+
+```{r, merge 538 datasets, include = FALSE}
+fivethirtyeight_df <- 
+  left_join(pols_month_df, snp_df, by = c("year", "month")) |> 
+  left_join(x = _, y = unemployment_df, by = c("year", "month"))
+  
+head(fivethirtyeight_df)
+```
+
+
+# Problem 2
+
+```{r, mr_trash_cleaning}
+mr_trash_df <- mr_trash_raw |> 
+  janitor::clean_names() |> 
+  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  mutate(wheel = "mr_trash",
+         homes_powered = weight_tons*500/30) |> 
+  pivot_longer(
+    plastic_bottles:sports_balls,
+    names_to = "trash_type",
+    values_to = "amount_collected") |> 
+  select(wheel, everything(), -homes_powered_old)
+
+  
+head(mr_trash_df)
 
 ```
 
 
+```{r, prof_trash_cleaning}
+prof_trash_df <- prof_trash_raw |> 
+  janitor::clean_names() |> 
+  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  mutate(wheel = "prof_trash",
+         homes_powered = weight_tons*500/30) |> 
+  pivot_longer(
+    plastic_bottles:chip_bags,
+    names_to = "trash_type",
+    values_to = "amount_collected") |> 
+  select(wheel, everything(), -homes_powered_old)
+
+  
+```
 
 
+```{r, gwyn_trash_cleaning}
+gwyn_trash_df <- gwyn_trash_raw |> 
+  janitor::clean_names() |> 
+  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  mutate(wheel = "gwynnda_trash",
+         homes_powered = weight_tons*500/30) |> 
+  pivot_longer(
+    plastic_bottles:plastic_bags,
+    names_to = "trash_type",
+    values_to = "amount_collected") |> 
+  select(wheel, everything(), -homes_powered_old)
+
+  
+head(gwyn_trash_df)
+
+```
+
+```{r}
+trash_wheels_df <- rbind(mr_trash_df, prof_trash_df, gwyn_trash_df)
+
+view(trash_wheels_df)
+```
 
