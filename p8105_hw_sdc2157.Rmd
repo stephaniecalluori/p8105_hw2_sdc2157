@@ -118,7 +118,9 @@ head(fivethirtyeight_df)
 
 # Problem 2
 
-```{r, mr_trash_cleaning}
+First, we need to clean each of the Trash Wheel datasets.
+
+```{r, trash_cleaning}
 mr_trash_df <- mr_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
@@ -130,13 +132,8 @@ mr_trash_df <- mr_trash_raw |>
     values_to = "amount_collected") |> 
   select(wheel, everything(), -homes_powered_old)
 
-  
 head(mr_trash_df)
 
-```
-
-
-```{r, prof_trash_cleaning}
 prof_trash_df <- prof_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
@@ -148,41 +145,48 @@ prof_trash_df <- prof_trash_raw |>
     values_to = "amount_collected") |> 
   select(wheel, everything(), -homes_powered_old)
 
-  
-```
+head(prof_trash_df)
 
-
-```{r, gwyn_trash_cleaning}
 gwyn_trash_df <- gwyn_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
   mutate(wheel = "gwynnda_trash",
          homes_powered = weight_tons*500/30) |> 
-  pivot_longer(
+    pivot_longer(
     plastic_bottles:plastic_bags,
     names_to = "trash_type",
     values_to = "amount_collected") |> 
   select(wheel, everything(), -homes_powered_old)
 
-  
 head(gwyn_trash_df)
 
 ```
 
+Next, we will combine the 3 Trash Wheel datasets into a single dataset.
 ```{r, combine trash datasets}
 trash_wheels_df <- rbind(mr_trash_df, prof_trash_df, gwyn_trash_df)
 
-view(trash_wheels_df)
+head(trash_wheels_df)
 ```
 
 
-```{r}
-gywn_cig <-
+```{r, results = "hide", echo = FALSE}
+gywn_cig_df <-
   trash_wheels_df |> 
   filter(wheel == "gwynnda_trash" & month == "July" & year == "2021" & trash_type == "cigarette_butts") |>
   summarize(total_cigs = sum(amount_collected))
 
+prof_weight_df <-
+  trash_wheels_df |> 
+  filter(wheel == "prof_trash") |>
+  distinct(dumpster, weight_tons) |> 
+  summarize(total_weight = sum(weight_tons))
+
 ```
+
+Professor Trash Wheel collected a total of `r pull(prof_weight_df, total_weight)` tons of trash.
+
+In July 2021, Gwynnda collected a total of `r pull(gywn_cig_df, total_cigs)` cigarette butts.
 
 Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
