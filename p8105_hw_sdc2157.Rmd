@@ -120,68 +120,62 @@ head(fivethirtyeight_df)
 
 First, we need to clean each of the Trash Wheel datasets.
 
-```{r, trash_cleaning}
+
+```{r, mr trash cleaning}
 mr_trash_df <- mr_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
   mutate(wheel = "mr_trash",
-         homes_powered = weight_tons*500/30) |> 
-  pivot_longer(
-    plastic_bottles:sports_balls,
-    names_to = "trash_type",
-    values_to = "amount_collected") |> 
+         homes_powered = weight_tons*500/30,
+         year = as.numeric(year)) |> 
   select(wheel, everything(), -homes_powered_old)
 
+str(mr_trash_df)
 head(mr_trash_df)
+```
 
+
+```{r, prof trash cleaning}
 prof_trash_df <- prof_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
   mutate(wheel = "prof_trash",
          homes_powered = weight_tons*500/30) |> 
-  pivot_longer(
-    plastic_bottles:chip_bags,
-    names_to = "trash_type",
-    values_to = "amount_collected") |> 
   select(wheel, everything(), -homes_powered_old)
 
-head(prof_trash_df)
+str(prof_trash_df)
+```
 
+
+```{r, gywnnda trash cleaning}
 gwyn_trash_df <- gwyn_trash_raw |> 
   janitor::clean_names() |> 
   rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
   mutate(wheel = "gwynnda_trash",
          homes_powered = weight_tons*500/30) |> 
-    pivot_longer(
-    plastic_bottles:plastic_bags,
-    names_to = "trash_type",
-    values_to = "amount_collected") |> 
   select(wheel, everything(), -homes_powered_old)
 
-head(gwyn_trash_df)
-
+str(gwyn_trash_df)
 ```
+
 
 Next, we will combine the 3 Trash Wheel datasets into a single dataset.
 ```{r, combine trash datasets}
-trash_wheels_df <- rbind(mr_trash_df, prof_trash_df, gwyn_trash_df)
+trash_wheels_df <- bind_rows(mr_trash_df, prof_trash_df, gwyn_trash_df)
 
-head(trash_wheels_df)
+view(trash_wheels_df)
+str(trash_wheels_df)
 ```
 
 
 ```{r, results = "hide", echo = FALSE}
-gywn_cig_df <-
-  trash_wheels_df |> 
-  filter(wheel == "gwynnda_trash" & month == "July" & year == "2021" & trash_type == "cigarette_butts") |>
-  summarize(total_cigs = sum(amount_collected))
-
-prof_weight_df <-
-  trash_wheels_df |> 
-  filter(wheel == "prof_trash") |>
-  distinct(dumpster, weight_tons) |> 
+prof_weight_df <- trash_wheels_df |> 
+  filter(wheel == "prof_trash") |> 
   summarize(total_weight = sum(weight_tons))
 
+gywn_cig_df <- trash_wheels_df |> 
+  filter(wheel == "gwynnda_trash" & month == "July" & year == "2021") |> 
+  summarize(total_cigs = sum(cigarette_butts))
 ```
 
 Professor Trash Wheel collected a total of `r pull(prof_weight_df, total_weight)` tons of trash.
