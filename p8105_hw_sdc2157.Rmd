@@ -218,13 +218,15 @@ num_female <- mci_baseline_df |>
   nrow()
 ```
 
-`r num_recruited_original` participants were recruited into the study. When cleaning the data, we removed participants who did not meet the inclusion criteria for the study (participants had to be free of MCI at baseline). `r num_recruited_original - num_recruited_clean` participant was found to have MCI at baseline. Thus, `r num_recruited_clean` participants were included in our final analyses. 
+Based on the mci_baseline data set, `r num_recruited_original` participants were recruited into the study. When cleaning the data, we removed participants who did not meet the inclusion criteria for the study (participants had to be free of MCI at baseline). `r num_recruited_original - num_recruited_clean` participant was found to have MCI at baseline. Thus, `r num_recruited_clean` participants were included in our final analyses. 
 
 The average baseline age of participants was `r round(mean(pull(mci_baseline_df, current_age)))` years old with a standard deviation of `r round(sd(pull(mci_baseline_df, current_age)))` years.
 
 It was found that `r num_mci` participants (`r round(num_mci / num_recruited_clean *100)`%) developed MCI over the course of the study. Of the `r num_female` women in the study, `r round(num_apoe_female / num_female * 100)`% women were APOE4 carriers.
 
-#MCI_Amyloid data set
+## MCI_Amyloid data set
+
+The first two rows of the raw mci_amyloid data set contain a header and the variable names. When importing the data set (see above), we skipped the header in the first row and set col_names to TRUE, so we only imported the variable names and observations. There are NA values present in the data set. NA values were not removed at this time, because it is important to determine the questions that we would like to answer with the data before identifying if and when NA values should be removed.
 
 ```{r}
 
@@ -245,6 +247,10 @@ nrow(mci_amyloid_df)
   
 ```
 
+To clean the mci_amyloid data set, the variables were renamed and the class of variables were corrected. Here, the time_to_visit_ir:time_8 variables were changed from character to numeric variables. The cleaned mci_amyloid data set contains `r nrow(mci_amyloid_df)` observations and `r ncol(mci_amyloid_df)` variables. 
+
+Next, we will join the mci_baseline and mci_amyloid data sets.
+
 ```{r}
 mci_no_overlap_df <- anti_join(mci_baseline_df, mci_amyloid_df, join_by(id))
 
@@ -253,6 +259,11 @@ mci_intersection_df <- inner_join(mci_baseline_df, mci_amyloid_df, join_by(id))
 write_csv(mci_intersection_df,"data/mci_intersection.csv")
 
 ```
+
+It was found that `r nrow(mci_no_overlap_df)` participants were not present in both data sets. 
+
+In contrast, `r nrow(mci_intersection_df)` participants were present in both data sets. 
+
 
 
 
