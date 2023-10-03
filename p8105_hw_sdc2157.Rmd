@@ -28,19 +28,19 @@ unemployment_raw <-
 sum(is.na(unemployment_raw))
 
 mr_trash_raw <-
-  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N549")
+  read_excel("data/202309 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N586")
 
-sum(is.na(mr_trash_raw))
+sum(is.na(pull(mr_trash_raw, Dumpster)))
 
 prof_trash_raw <-
-  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M96")
+  read_excel("data/202309 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M108")
 
-sum(is.na(prof_trash_raw))
+sum(is.na(pull(prof_trash_raw, Dumpster)))
 
 gwyn_trash_raw <-
-  read_excel("data/202207 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:K108")
+  read_excel("data/202309 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:L157")
 
-sum(is.na(gwyn_trash_raw))
+sum(is.na(pull(gwyn_trash_raw, Dumpster)))
 
 mci_amyloid_raw <-
   read_csv("data/mci_amyloid.csv", skip = 1, col_names = TRUE)
@@ -143,7 +143,7 @@ The combined fiverthirtyeight data set compiles contains `r nrow(fivethirtyeight
 
 ## Mr. Trash Wheel Cleaning
 
-Note: The year variable had to be converted to a numeric variable. 
+Note: The year variable needed to be converted from a character variable to a numeric variable. 
 
 ```{r, mr trash cleaning}
 mr_trash_df <- mr_trash_raw |> 
@@ -213,7 +213,7 @@ In July 2021, Gwynnda collected a total of `r format(round(pull(gywn_cig_df, tot
 # Problem 3
 ## MCI_baseline Cleaning
 
-The first two rows of the raw mci_baseline data set contain a header and the variable names. When importing the data set (see above), we skipped the header in the first row and set col_names to TRUE, so we only imported the variable names and observations. There were no NA values in the data set. The period (".") in the age_at_onset indicated that the participant never developed MCI.
+The first two rows of the raw mci_baseline data set contain a header and the variable names. When importing the data set (see above), we skipped the header in the first row and set col_names to TRUE, so we only imported the variable names and observations. **There were no NA values in the data set. The period (".") in the age_at_onset indicated that the participant never developed MCI during the study.**
 
 We recoded the categorical variables of sex and apoe4 status, so the values appeared as the category names instead of numbers.
 
