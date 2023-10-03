@@ -224,6 +224,36 @@ The average baseline age of participants was `r round(mean(pull(mci_baseline_df,
 
 It was found that `r num_mci` participants (`r round(num_mci / num_recruited_clean *100)`%) developed MCI over the course of the study. Of the `r num_female` women in the study, `r round(num_apoe_female / num_female * 100)`% women were APOE4 carriers.
 
+#MCI_Amyloid data set
+
+```{r}
+
+str(mci_amyloid_raw)
+nrow(mci_amyloid_raw)
+
+mci_amyloid_df <- mci_amyloid_raw |> 
+  janitor::clean_names() |> 
+  rename(id = study_id, time_to_visit_ir = baseline) |> 
+  mutate(time_to_visit_ir = as.numeric(time_to_visit_ir), 
+         time_2 = as.numeric(time_2),
+         time_4 = as.numeric(time_4),
+         time_6 = as.numeric(time_6),
+         time_8 = as.numeric(time_8))
+
+str(mci_amyloid_df)
+nrow(mci_amyloid_df)
+  
+```
+
+```{r}
+mci_no_overlap_df <- anti_join(mci_baseline_df, mci_amyloid_df, join_by(id))
+
+mci_intersection_df <- inner_join(mci_baseline_df, mci_amyloid_df, join_by(id))
+
+write_csv(mci_intersection_df,"data/mci_intersection.csv")
+
+```
+
 
 
 
