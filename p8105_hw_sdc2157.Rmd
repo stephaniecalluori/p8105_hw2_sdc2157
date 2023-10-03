@@ -120,7 +120,6 @@ head(fivethirtyeight_df)
 
 First, we need to clean each of the Trash Wheel datasets.
 
-
 ```{r, mr trash cleaning}
 mr_trash_df <- mr_trash_raw |> 
   janitor::clean_names() |> 
@@ -134,6 +133,7 @@ str(mr_trash_df)
 head(mr_trash_df)
 ```
 
+The Mr. Trash Wheel data set contains `r nrow(mr_trash_df)` observations and `r ncol(mr_trash_df)` variables. Variables include `r colnames(mr_trash_df)`. Data was collected from `r min(pull(mr_trash_df, year))` to `r max(pull(mr_trash_df, year))`. During this time, Mr. Trash Wheel collected about `r round(sum(pull(mr_trash_df, weight_tons)))` tons of trash, which powered approximately `r format(round(sum(pull(mr_trash_df, homes_powered))), scientific = FALSE)` homes!
 
 ```{r, prof trash cleaning}
 prof_trash_df <- prof_trash_raw |> 
@@ -146,6 +146,7 @@ prof_trash_df <- prof_trash_raw |>
 str(prof_trash_df)
 ```
 
+The Prof. Trash Wheel data set contains `r nrow(prof_trash_df)` observations and `r ncol(prof_trash_df)` variables. Variables include `r colnames(prof_trash_df)`. Data was collected from `r min(pull(prof_trash_df, year))` to `r max(pull(prof_trash_df, year))`. During this time, Prof. Trash Wheel collected about `r round(sum(pull(prof_trash_df, weight_tons)))` tons of trash, which powered approximately `r round(sum(pull(prof_trash_df, homes_powered)))` homes!
 
 ```{r, gywnnda trash cleaning}
 gwyn_trash_df <- gwyn_trash_raw |> 
@@ -158,6 +159,8 @@ gwyn_trash_df <- gwyn_trash_raw |>
 str(gwyn_trash_df)
 ```
 
+The Gwynnda Trash Wheel data set contains `r nrow(gwyn_trash_df)` observations and `r ncol(gwyn_trash_df)` variables. Variables include `r colnames(gwyn_trash_df)`. Data was collected from `r min(pull(gwyn_trash_df, year))` to `r max(pull(gwyn_trash_df, year))`. During this time, Gwynnda Trash Wheel collected about `r round(sum(pull(gwyn_trash_df, weight_tons)))` tons of trash, which powered approximately `r round(sum(pull(gwyn_trash_df, homes_powered)))` homes!
+
 
 Next, we will combine the 3 Trash Wheel datasets into a single dataset.
 ```{r, combine trash datasets}
@@ -167,6 +170,7 @@ view(trash_wheels_df)
 str(trash_wheels_df)
 ```
 
+The combined data set contains `r nrow(trash_wheels_df)` observations and `r ncol(trash_wheels_df)` variables. Variables include `r colnames(trash_wheels_df)`. From  `r min(pull(trash_wheels_df, year))` to `r max(pull(trash_wheels_df, year))`, the three trash wheels collected a total of `r round(sum(pull(trash_wheels_df, weight_tons)))` tons of trash, which powered approximately `r format(round(sum(pull(trash_wheels_df, homes_powered))), scientific = FALSE)` homes!
 
 ```{r, results = "hide", echo = FALSE}
 prof_weight_df <- trash_wheels_df |> 
@@ -182,6 +186,5 @@ Professor Trash Wheel collected a total of `r pull(prof_weight_df, total_weight)
 
 In July 2021, Gwynnda collected a total of `r pull(gywn_cig_df, total_cigs)` cigarette butts.
 
-Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 
