@@ -1,5 +1,5 @@
 ---
-title: "p8105_hw1_sdc2157"
+title: "p8105_hw2_sdc2157"
 author: "Stephanie Calluori"
 date: 2023-10-04
 output: github_document
@@ -136,7 +136,7 @@ fivethirtyeight_df <-
   
 ```
 
-The combined fiverthirtyeight data set compiles contains `r nrow(fivethirtyeight_df)` observations and `r ncol(fivethirtyeight_df)` variables. Variables include `r colnames(fivethirtyeight_df)`. Data spans the years  `r min(pull(fivethirtyeight_df, year))` to `r max(pull(fivethirtyeight_df, year))`.
+The combined fiverthirtyeight data set contains `r nrow(fivethirtyeight_df)` observations and `r ncol(fivethirtyeight_df)` variables. Variables include `r colnames(fivethirtyeight_df)`. Data spans the years `r min(pull(fivethirtyeight_df, year))` to `r max(pull(fivethirtyeight_df, year))`.
 
 
 # Problem 2
@@ -148,7 +148,8 @@ Note: The year variable needed to be converted from a character variable to a nu
 ```{r, mr trash cleaning}
 mr_trash_df <- mr_trash_raw |> 
   janitor::clean_names() |> 
-  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  rename(volume_cubic_yds = volume_cubic_yards, 
+         homes_powered_old = homes_powered) |> 
   mutate(wheel = "mr_trash",
          homes_powered = weight_tons*500/30,
          year = as.numeric(year)) |> 
@@ -163,7 +164,8 @@ The Mr. Trash Wheel data set contains `r nrow(mr_trash_df)` observations and `r 
 ```{r, prof trash cleaning}
 prof_trash_df <- prof_trash_raw |> 
   janitor::clean_names() |> 
-  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  rename(volume_cubic_yds = volume_cubic_yards, 
+         homes_powered_old = homes_powered) |> 
   mutate(wheel = "prof_trash",
          homes_powered = weight_tons*500/30) |> 
   select(wheel, everything(), -homes_powered_old)
@@ -177,7 +179,8 @@ The Prof. Trash Wheel data set contains `r nrow(prof_trash_df)` observations and
 ```{r, gywnnda trash cleaning}
 gwyn_trash_df <- gwyn_trash_raw |> 
   janitor::clean_names() |> 
-  rename(volume_cubic_yds = volume_cubic_yards, homes_powered_old = homes_powered) |> 
+  rename(volume_cubic_yds = volume_cubic_yards, 
+         homes_powered_old = homes_powered) |> 
   mutate(wheel = "gwynnda_trash",
          homes_powered = weight_tons*500/30) |> 
   select(wheel, everything(), -homes_powered_old)
@@ -194,7 +197,7 @@ trash_wheels_df <- bind_rows(mr_trash_df, prof_trash_df, gwyn_trash_df)
 
 ```
 
-The combined data set contains `r nrow(trash_wheels_df)` observations and `r ncol(trash_wheels_df)` variables. Variables include `r colnames(trash_wheels_df)`. From  `r min(pull(trash_wheels_df, year))` to `r max(pull(trash_wheels_df, year))`, the three trash wheels collected a total of `r round(sum(pull(trash_wheels_df, weight_tons)))` tons of trash, which powered approximately `r format(round(sum(pull(trash_wheels_df, homes_powered))), scientific = FALSE)` homes!
+The combined trash wheel data set contains `r nrow(trash_wheels_df)` observations and `r ncol(trash_wheels_df)` variables. Variables include `r colnames(trash_wheels_df)`. From  `r min(pull(trash_wheels_df, year))` to `r max(pull(trash_wheels_df, year))`, the three trash wheels collected a total of `r round(sum(pull(trash_wheels_df, weight_tons)))` tons of trash, which powered approximately `r format(round(sum(pull(trash_wheels_df, homes_powered))), scientific = FALSE)` homes!
 
 ```{r, results = "hide", echo = FALSE}
 prof_weight_df <- trash_wheels_df |> 
@@ -250,7 +253,7 @@ num_female <- mci_baseline_df |>
 
 ```
 
-Based on the mci_baseline data set, `r num_recruited_original` participants were recruited into the study. When cleaning the data, we removed participants who did not meet the inclusion criteria for the study (participants had to be free of MCI at baseline). `r num_recruited_original - num_recruited_clean` participant was found to have MCI at baseline, which was was participant `r pull(removed_participant, id)`. `r num_recruited_clean` participants were included in our final analyses. Thus, the cleaned data set contained `r nrow(mci_baseline_df)` observations and `r ncol(mci_baseline_df)` variables
+Based on the mci_baseline data set, `r num_recruited_original` participants were recruited into the study. When cleaning the data, we removed participants who did not meet the inclusion criteria for the study (participants had to be free of MCI at baseline). `r num_recruited_original - num_recruited_clean` participant was found to have MCI at baseline, which was participant `r pull(removed_participant, id)`. `r num_recruited_clean` participants were included in our final analyses. Thus, the cleaned data set contained `r nrow(mci_baseline_df)` observations and `r ncol(mci_baseline_df)` variables
 
 The average baseline age of participants was `r round(mean(pull(mci_baseline_df, current_age)))` years old with a standard deviation of `r round(sd(pull(mci_baseline_df, current_age)))` years.
 
@@ -289,8 +292,7 @@ write_csv(mci_intersection_df,"data/mci_intersection.csv")
 
 It was found that `r nrow(mci_no_overlap_df)` participants were not included in both data sets.
 
-
-It was found that `r nrow(mci_no_overlap_df)` participants were not included in both data sets.
+It was found that `r nrow(mci_intersection_df)` participants were included in both data sets.
 
 The combined data set contains `r nrow(mci_intersection_df)` observations and `r ncol(mci_intersection_df)` variables. Variables include `r colnames(mci_intersection_df)`. `r mci_intersection_df |> filter(apoe4 == "carrier") |> nrow()` of the participants in the combined data set were APOE4 carriers.
 
